@@ -1,1 +1,29 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
 @import "tailwindcss";
+
+@theme {
+  --color-x-purple: #3E245B;
+  --color-light-purple: #7041A4;
+  --color-x-yellow: #FBD652;
+  --color-pale-purple: #A47FCC;
+
+    --animate-touch: touch .3s ease-out;
+  @keyframes touch {
+    0%,
+    100% {
+      transform: scale(100%);
+    }
+    50% {
+      transform: scale(90%);
+    }
+  }
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+.material-icons.md-36 {
+    font-size: 36px;
+}
