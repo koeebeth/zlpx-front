@@ -3,5 +3,5 @@ export const enum TabsEnum {
   MAIN = "MAIN",
   CALENDAR = "CALENDAR",
   SEARCH = "SEARCH",
-  PROFILE = "PROFILE"
+  PROFILE = "PROFILE",
 }
