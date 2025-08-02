@@ -11,13 +11,13 @@ export const calendarApi = createApi({
   endpoints: (builder) => ({
     getSchedule: builder.query<CalendarEventT[], void>({
       query: () => "/schedule",
-      transformResponse: (rawResponse: EventApiT[]): CalendarEventT[] => {
-        return rawResponse
+      transformResponse: (rawResponse: { events: EventApiT[] }): CalendarEventT[] => {
+        return rawResponse.events
           .map((evt) => ({
             datetime: evt.date,
-            title: evt.text,
+            title: evt.activity,
             location: "",
-            project: evt.activity,
+            project: evt.project,
           }))
           .sort((a, b) => {
             return new Date(a.datetime).getTime() <
