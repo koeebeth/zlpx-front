@@ -26,7 +26,7 @@ export const CalendarTab: FC = () => {
         </button>
       </div>
       <div className="flex flex-col items-center overflow-scroll bg-white grow dark:bg-zinc-900">
-        {events.map((evt: CalendarEventT, idx) => (
+        {events.map((evt: CalendarEventT, idx: number) => (
           <div className="w-full">
             <CalendarBlock event={evt} />
             {idx !== events.length - 1 && (
