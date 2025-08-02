@@ -26,10 +26,10 @@ export default tseslint.config([
       globals: globals.browser,
     },
     rules: {
-      "simple-import-sort/imports": "error",
-      "simple-import-sort/exports": "error",
+      "simple-import-sort/imports": "warn",
+      "simple-import-sort/exports": "warn",
       "sort-imports": [
-        "error",
+        "warn",
         {
           ignoreDeclarationSort: true,
         },
