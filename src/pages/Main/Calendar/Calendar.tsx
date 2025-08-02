@@ -4,10 +4,19 @@ import { Loader } from "../../../components/Loader";
 import { useGetScheduleQuery } from "../../../store/api/api";
 import { CalendarBlock } from "./CalendarBlock";
 import { NewEventTab } from "./NewEvent/NewEvent";
+import { Filter } from "./Filter/Filter";
 
 export const CalendarTab: FC = () => {
   const [bottomPanelOpen, setBottomPanelOpen] = useState(false);
-  const { data: eventsData, isLoading, error } = useGetScheduleQuery();
+  const [filterOptions] = useState({
+    start: "today",
+    end: "",
+  });
+  const {
+    data: eventsData,
+    isLoading,
+    error,
+  } = useGetScheduleQuery(filterOptions);
 
   if (error) {
     console.log(error);
@@ -28,6 +37,7 @@ export const CalendarTab: FC = () => {
           <span className="material-icons material-icons-round">add</span>
         </button>
       </div>
+      {/* <Filter options={filterOptions} setOptions={setFilterOptions} /> */}
       <div className="flex flex-col items-center overflow-scroll bg-white grow dark:bg-zinc-900">
         {isLoading ? (
           <Loader />
