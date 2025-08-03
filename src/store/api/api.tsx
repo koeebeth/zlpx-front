@@ -12,11 +12,17 @@ export const calendarApi = createApi({
     getSchedule: builder.query<
       CalendarEventT[],
       {
-        start: string;
-        end: string;
+        start?: string;
+        end?: string;
       } | void
     >({
-      query: (q) => `/schedule?start_date=${q?.start}&end_date=${q?.end}` ,
+      query: (q) => {
+        const params = new URLSearchParams();
+        if (q?.start) params.append('start_date', q.start);
+        if (q?.end) params.append('end_date', q.end);
+
+        return `/schedule?${params.toString()}`;
+      },
       transformResponse: (rawResponse: {
         events: EventApiT[];
       }): CalendarEventT[] => {

@@ -8,9 +8,12 @@ import { Filter } from "./Filter/Filter";
 
 export const CalendarTab: FC = () => {
   const [bottomPanelOpen, setBottomPanelOpen] = useState(false);
-  const [filterOptions] = useState({
-    start: "today",
-    end: "",
+  const [filterOptions] = useState(() => {
+    const start = new Date();
+    
+    return {
+      start: start.toISOString().split('T')[0],
+    };
   });
   const {
     data: eventsData,
