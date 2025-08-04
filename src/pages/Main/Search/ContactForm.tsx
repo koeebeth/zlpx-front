@@ -1,6 +1,6 @@
+import isEmpty from "lodash/isEmpty";
 import { FC } from "react";
 import { useForm } from "react-hook-form";
-import isEmpty from "lodash/isEmpty";
 import { SubmitHandler } from "react-hook-form";
 
 import TelegramIcon from "../../../assets/telegram.svg?react";
