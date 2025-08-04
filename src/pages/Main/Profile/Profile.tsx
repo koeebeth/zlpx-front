@@ -1,10 +1,10 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 
 import { UserProfile } from "../../../types";
 import { ProfileDetails } from "../Search/ProfileDetails";
 
 export const Profile: FC = () => {
-  const user: UserProfile = {
+  const [user, setUser] = useState<UserProfile>({
     telegram_id: 6666666,
     status: 0,
     live_metro_station: ["Станция"],
@@ -17,15 +17,15 @@ export const Profile: FC = () => {
     full_name: "Имя Фамилия",
     vk_nickname: "username",
     telegram_nickname: "username",
-    phone_number: "+7 (111) 111 11 11",
-  };
+    phone_number: "+7 111 111 11 11",
+  });
 
   return (
     <>
       <div className="w-full p-4 text-center text-xl font-medium text-light-purple">
         Профиль
       </div>
-      <ProfileDetails user={user} />
+      <ProfileDetails user={user} setUser={setUser} isSelf={true} />
     </>
   );
 };
