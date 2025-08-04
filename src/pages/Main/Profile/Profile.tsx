@@ -1,31 +1,31 @@
-import { Avatar } from "@mui/material";
 import { FC } from "react";
 
+import { UserProfile } from "../../../types";
+import { ProfileDetails } from "../Search/ProfileDetails";
+
 export const Profile: FC = () => {
-  // @ts-expect-error telegram window api
-  const user = window.Telegram?.WebApp?.initDataUnsafe?.user;
+  const user: UserProfile = {
+    telegram_id: 6666666,
+    status: 0,
+    live_metro_station: ["Станция"],
+    study_metro_station: ["Станция"],
+    year_of_admission: 2025,
+    has_driver_license: 1,
+    date_of_birth: "2004-01-11",
+    has_printer: 1,
+    can_host_night: false,
+    full_name: "Имя Фамилия",
+    vk_nickname: "username",
+    telegram_nickname: "username",
+    phone_number: "+7 (111) 111 11 11",
+  };
 
   return (
     <>
       <div className="w-full p-4 text-center text-xl font-medium text-light-purple">
         Профиль
       </div>
-      <div className="flex flex-col p-2 bg-zinc-300 flex-1 dark:bg-zinc-900">
-        <div className="rounded-lg bg-zinc-400 dark:bg-zinc-800 h-28 flex items-center justify-between p-2 px-6">
-          <div>
-            <h4 className="mb-2 text-sm dark:text-zinc-400">
-              {`@${user ? user.username : "username"}`}
-            </h4>
-            <h3 className="font-semibold mb-2 dark:text-zinc-200">
-              {user ? `${user.first_name} ${user.last_name}` : "Имя Фамилия"}
-            </h3>
-            <h4 className="text-x-purple text-sm dark:text-light-purple">
-              тутуту
-            </h4>
-          </div>
-          <Avatar sx={{ width: 70, height: 70 }}>ТУ</Avatar>
-        </div>
-      </div>
+      <ProfileDetails user={user} />
     </>
   );
 };

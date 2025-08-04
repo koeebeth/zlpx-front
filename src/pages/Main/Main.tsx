@@ -11,7 +11,7 @@ export const MainPage: FC = () => {
 
   return (
     <div className="w-screen h-screen flex flex-col bg-zinc-100 dark:bg-zinc-800">
-      <div className="w-full grow overflow-hidden flex flex-col">
+      <div className="w-full overflow-hidden flex flex-col flex-1">
         {activeTab === TabsEnum.CALENDAR && (
           <CalendarTab />
         )}

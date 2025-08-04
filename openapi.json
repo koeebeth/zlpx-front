@@ -1,0 +1,432 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Google Sheets Events API",
+    "description": "API для работы с событиями из Google Sheets",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Health Check",
+        "description": "Проверка состояния API",
+        "operationId": "health_check_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HealthResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/schedule": {
+      "get": {
+        "summary": "Get Schedule",
+        "description": "Получение расписания событий",
+        "operationId": "get_schedule_schedule_get",
+        "parameters": [
+          {
+            "name": "refresh",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "description": "Принудительное обновление кэша",
+              "examples": [false],
+              "default": false,
+              "title": "Refresh"
+            },
+            "description": "Принудительное обновление кэша"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ScheduleResponse" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/schedule/add": {
+      "post": {
+        "summary": "Add Schedule",
+        "description": "Добавление события в расписание TODO",
+        "operationId": "add_schedule_schedule_add_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ScheduleResponse" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ScheduleResponse" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/{telegram_id}": {
+      "get": {
+        "summary": "Get User Profile",
+        "description": "Получение профиля пользователя TODO",
+        "operationId": "get_user_profile_user__telegram_id__get",
+        "parameters": [
+          {
+            "name": "telegram_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "title": "Telegram Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UserProfileResponse" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/update": {
+      "post": {
+        "summary": "Update User Profile",
+        "description": "Обновление профиля пользователя с указанием полей для изменения TODO",
+        "operationId": "update_user_profile_user_update_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserProfileUpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "boolean",
+                  "title": "Response Update User Profile User Update Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Event": {
+        "properties": {
+          "project": {
+            "type": "string",
+            "title": "Project",
+            "description": "Название проекта/активности"
+          },
+          "date": {
+            "type": "string",
+            "format": "date",
+            "title": "Date",
+            "description": "Дата события"
+          },
+          "activity": {
+            "type": "string",
+            "title": "Activity",
+            "description": "Описание активности"
+          }
+        },
+        "type": "object",
+        "required": ["project", "date", "activity"],
+        "title": "Event"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": { "$ref": "#/components/schemas/ValidationError" },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "HealthResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "pattern": "^(healthy|unhealthy)$",
+            "title": "Status",
+            "description": "Статус API"
+          },
+          "google_api": {
+            "type": "string",
+            "pattern": "^(connected|disconnected)$",
+            "title": "Google Api",
+            "description": "Статус подключения к Google API"
+          }
+        },
+        "type": "object",
+        "required": ["status", "google_api"],
+        "title": "HealthResponse",
+        "description": "Схема ответа для эндпоинта /health",
+        "example": { "google_api": "connected", "status": "healthy" }
+      },
+      "ScheduleResponse": {
+        "properties": {
+          "events": {
+            "items": { "$ref": "#/components/schemas/Event" },
+            "type": "array",
+            "minItems": 0,
+            "title": "Events",
+            "description": "Список событий из Google Sheets"
+          }
+        },
+        "type": "object",
+        "required": ["events"],
+        "title": "ScheduleResponse",
+        "description": "Схема ответа для эндпоинта /schedule",
+        "example": {
+          "events": [
+            {
+              "activity": "Собрание по пиару",
+              "date": "2025-01-15",
+              "project": "Школа Актива"
+            }
+          ]
+        }
+      },
+      "UserDriverLicense": {
+        "type": "integer",
+        "enum": [0, 1, 2],
+        "title": "UserDriverLicense"
+      },
+      "UserPrinter": {
+        "type": "integer",
+        "enum": [0, 1, 2, 3],
+        "title": "UserPrinter"
+      },
+      "UserProfile": {
+        "properties": {
+          "telegram_id": {
+            "type": "integer",
+            "title": "Telegram Id",
+            "description": "Telegram ID"
+          },
+          "telegram_nickname": {
+            "type": "string",
+            "title": "Telegram Nickname",
+            "description": "Ник в ТГ"
+          },
+          "vk_nickname": {
+            "type": "string",
+            "title": "Vk Nickname",
+            "description": "Ник в ВК"
+          },
+          "status": {
+            "$ref": "#/components/schemas/UserStatus",
+            "description": "Статус"
+          },
+          "full_name": {
+            "type": "string",
+            "title": "Full Name",
+            "description": "ФИО"
+          },
+          "phone_number": {
+            "type": "string",
+            "title": "Phone Number",
+            "description": "Номер телефона"
+          },
+          "live_metro_station": {
+            "items": { "type": "string" },
+            "type": "array",
+            "title": "Live Metro Station",
+            "description": "Станция метро, на которой ты живешь"
+          },
+          "study_metro_station": {
+            "items": { "type": "string" },
+            "type": "array",
+            "title": "Study Metro Station",
+            "description": "Станция метро, на которой ты учишься/работаешь"
+          },
+          "year_of_admission": {
+            "type": "integer",
+            "title": "Year Of Admission",
+            "description": "Год поступления в СтС"
+          },
+          "has_driver_license": {
+            "$ref": "#/components/schemas/UserDriverLicense",
+            "description": "Есть ли у тебя водительские права и/или машина?"
+          },
+          "date_of_birth": {
+            "type": "string",
+            "format": "date",
+            "title": "Date Of Birth",
+            "description": "Дата Рождения"
+          },
+          "has_printer": {
+            "type": "#/components/schemas/UserStatus",
+            "title": "Has Printer",
+            "description": "Если ли у тебя принтер?"
+          },
+          "can_host_night": {
+            "type": "boolean",
+            "title": "Can Host Night",
+            "description": "Можем ли мы проводить ночь креатива/ночь оформления у тебя дома?"
+          }
+        },
+        "type": "object",
+        "required": [
+          "telegram_id",
+          "telegram_nickname",
+          "vk_nickname",
+          "status",
+          "full_name",
+          "phone_number",
+          "live_metro_station",
+          "study_metro_station",
+          "year_of_admission",
+          "has_driver_license",
+          "date_of_birth",
+          "has_printer",
+          "can_host_night"
+        ],
+        "title": "UserProfile"
+      },
+      "UserProfileResponse": {
+        "properties": {
+          "user_profile": {
+            "$ref": "#/components/schemas/UserProfile",
+            "description": "Профиль пользователя"
+          }
+        },
+        "type": "object",
+        "required": ["user_profile"],
+        "title": "UserProfileResponse",
+        "description": "Схема ответа для эндпоинта /user_profile",
+        "example": {
+          "user_profile": {
+            "can_host_night": true,
+            "date_of_birth": "2000-01-01",
+            "full_name": "Иван Иванов Иванович",
+            "has_driver_license": 0,
+            "has_printer": 3,
+            "live_metro_station": ["Одинцово", "Дубки"],
+            "phone_number": "+79991234567",
+            "status": 2,
+            "study_metro_station": ["Чкаловская", "Курская", "Китай-город"],
+            "telegram_id": 123456789,
+            "telegram_nickname": "ivan_ivanov",
+            "vk_nickname": "ivan_ivanovvv",
+            "year_of_admission": 2024
+          }
+        }
+      },
+      "UserProfileUpdateRequest": {
+        "properties": {
+          "telegram_id": {
+            "type": "integer",
+            "title": "Telegram Id",
+            "description": "Telegram ID пользователя для обновления"
+          },
+          "from_user_telegram_id": {
+            "type": "integer",
+            "title": "From User Telegram Id",
+            "description": "Telegram ID пользователя, который делает запрос"
+          },
+          "fields": {
+            "type": "object",
+            "minProperties": 1,
+            "title": "Fields",
+            "description": "Словарь с полями для обновления"
+          }
+        },
+        "type": "object",
+        "required": ["telegram_id", "from_user_telegram_id", "fields"],
+        "title": "UserProfileUpdateRequest",
+        "description": "Схема запроса для частичного обновления профиля пользователя",
+        "example": {
+          "fields": {
+            "full_name": "Новое ФИО",
+            "live_metro_station": ["Новая станция"],
+            "phone_number": "+79991234567"
+          },
+          "from_user_telegram_id": 987654321,
+          "telegram_id": 123456789
+        }
+      },
+      "UserStatus": {
+        "type": "integer",
+        "enum": [0, 1, 2, 3],
+        "title": "UserStatus"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": { "anyOf": [{ "type": "string" }, { "type": "integer" }] },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": { "type": "string", "title": "Message" },
+          "type": { "type": "string", "title": "Error Type" }
+        },
+        "type": "object",
+        "required": ["loc", "msg", "type"],
+        "title": "ValidationError"
+      }
+    }
+  }
+}

@@ -4,7 +4,6 @@ import { Loader } from "../../../components/Loader";
 import { useGetScheduleQuery } from "../../../store/api/api";
 import { CalendarBlock } from "./CalendarBlock";
 import { NewEventTab } from "./NewEvent/NewEvent";
-import { Filter } from "./Filter/Filter";
 
 export const CalendarTab: FC = () => {
   const [bottomPanelOpen, setBottomPanelOpen] = useState(false);
