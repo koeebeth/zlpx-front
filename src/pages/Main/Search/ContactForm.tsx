@@ -66,7 +66,7 @@ export const ContactForm: FC<PropsT> = ({ user, onSubmit }) => {
             />
           </h4>
           <h4 className="text-sm dark:text-zinc-400 flex gap-2 items-center">
-            <span className="material-icons md-20">phone</span>
+            <span className="material-icons md-16">phone</span>
             <input
               type="text"
               className={errors.phone_number ? inputClassesError : inputClasses}

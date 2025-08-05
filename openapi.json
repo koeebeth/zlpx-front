@@ -318,7 +318,7 @@
             "description": "Дата Рождения"
           },
           "has_printer": {
-            "type": "#/components/schemas/UserStatus",
+            "type": "#/components/schemas/UserPrinter",
             "title": "Has Printer",
             "description": "Если ли у тебя принтер?"
           },

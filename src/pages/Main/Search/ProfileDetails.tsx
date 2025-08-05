@@ -13,6 +13,7 @@ import {
 } from "../../../lib/utils";
 import { type UserProfile } from "../../../types";
 import { ContactForm } from "./ContactForm";
+import { PersonalInfoForm } from "./PersonalInfoForm";
 
 type PropsT = {
   user: UserProfile;
@@ -22,10 +23,10 @@ type PropsT = {
 
 export const ProfileDetails: FC<PropsT> = ({ user, setUser, isSelf }) => {
   const [isEditingContacts, setIsEditingContacts] = useState(false);
-  // const [isEditingPersonalInfo, setIsEditingPersonalInfo] = useState(false);
+  const [isEditingPersonalInfo, setIsEditingPersonalInfo] = useState(false);
   return (
     <div className="flex flex-col gap-2 p-2 bg-zinc-300 flex-1 dark:bg-zinc-900 overflow-scroll">
-      <div className="rounded-lg bg-zinc-400 dark:bg-zinc-800 flex items-center justify-between p-6 relative">
+      <div className="rounded-lg bg-zinc-400 dark:bg-zinc-800 flex items-center justify-between gap-1 p-6 relative">
         {isSelf && (
           <button
             className="absolute top-2 right-2"
@@ -37,10 +38,13 @@ export const ProfileDetails: FC<PropsT> = ({ user, setUser, isSelf }) => {
           </button>
         )}
         {isEditingContacts ? (
-          <ContactForm user={user} onSubmit={(data: UserProfile) => {
-            setUser(data);
-            setIsEditingContacts(false);
-          }} />
+          <ContactForm
+            user={user}
+            onSubmit={(data: UserProfile) => {
+              setUser(data);
+              setIsEditingContacts(false);
+            }}
+          />
         ) : (
           <>
             <div className="animate-fadein">
@@ -60,51 +64,64 @@ export const ProfileDetails: FC<PropsT> = ({ user, setUser, isSelf }) => {
             </div>
           </>
         )}
-        <Avatar sx={{ width: 100, height: 100, backgroundColor: "blueviolet" }}>
+        <Avatar sx={{ width: 90, height: 90, backgroundColor: "blueviolet" }}>
           ТУ
         </Avatar>
       </div>
       <div className="rounded-lg bg-zinc-400 dark:bg-zinc-800 p-6 relative">
         {isSelf && (
-          <button className="absolute top-2 right-2">
+          <button
+            className="absolute top-2 right-2"
+            onClick={() => setIsEditingPersonalInfo((prev) => !prev)}
+          >
             <span className="material-symbols-outlined dark:text-light-purple">
-              edit_square
+              {isEditingPersonalInfo ? "close" : "edit_square"}
             </span>
           </button>
         )}
         <h4 className="dark:text-zinc-400 mb-4">Личная Информация</h4>
-        <div className="flex flex-col gap-3">
-          <p className="dark: text-zinc-300 text-sm">
-            Живет возле станции: <b>{user?.live_metro_station.join(",")}</b>
-          </p>
-          <p className="dark: text-zinc-300 text-sm">
-            Учится возле станции: <b>{user?.study_metro_station.join(",")}</b>
-          </p>
-          <p className="dark: text-zinc-300 text-sm">
-            Дата рождения:{" "}
-            <b>
-              {format(new Date(user?.date_of_birth), "d MMMM yyyy", {
-                locale: ru,
-              })}
-            </b>
-          </p>
-          <p className="dark: text-zinc-300 text-sm">
-            Есть принтер: <b>{formatPrintInfo(user.has_printer)}</b>
-          </p>
-          <p className="dark: text-zinc-300 text-sm">
-            Может проводить НК: <b>{formatBool(user.can_host_night)}</b>
-          </p>
-          <p className="dark: text-zinc-300 text-sm">
-            Есть права/машина:{" "}
-            <b>{formatDriverLicense(user.has_driver_license)}</b>
-          </p>
-          <p className="dark: text-zinc-300 text-sm">
-            Год вступления в СТС: <b>{user.year_of_admission}</b>
-          </p>
-          <p className="dark: text-zinc-300 text-sm">
-            Статус: <b>{formatStatus(user.status)}</b>
-          </p>
-        </div>
+        {isEditingPersonalInfo ? (
+          <PersonalInfoForm
+            user={user}
+            setUser={(data) => {
+              setUser(data);
+              setIsEditingPersonalInfo(false);
+            }}
+          />
+        ) : (
+          <div className="flex flex-col gap-3 animate-fadein">
+            <p className="dark: text-zinc-300 text-sm">
+              Живет возле станции: <b>{user?.live_metro_station.join(",")}</b>
+            </p>
+            <p className="dark: text-zinc-300 text-sm">
+              Учится возле станции: <b>{user?.study_metro_station.join(",")}</b>
+            </p>
+            <p className="dark: text-zinc-300 text-sm">
+              Дата рождения:{" "}
+              <b>
+                {format(new Date(user?.date_of_birth), "d MMMM yyyy", {
+                  locale: ru,
+                })}
+              </b>
+            </p>
+            <p className="dark: text-zinc-300 text-sm">
+              Есть принтер: <b>{formatPrintInfo(user.has_printer)}</b>
+            </p>
+            <p className="dark: text-zinc-300 text-sm">
+              Может проводить НК: <b>{formatBool(user.can_host_night)}</b>
+            </p>
+            <p className="dark: text-zinc-300 text-sm">
+              Есть права/машина:{" "}
+              <b>{formatDriverLicense(user.has_driver_license)}</b>
+            </p>
+            <p className="dark: text-zinc-300 text-sm">
+              Год вступления в СТС: <b>{user.year_of_admission}</b>
+            </p>
+            <p className="dark: text-zinc-300 text-sm">
+              Статус: <b>{formatStatus(user.status)}</b>
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );
