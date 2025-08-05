@@ -81,15 +81,12 @@ function App() {
           telegramService.showAlert('Ошибка аутентификации');
         }
       } else {
-        // Обычная аутентификация для веб-версии
-        setTimeout(() => {
-          setActiveTab(TabsEnum.MAIN);
-          setIsLoading(false);
-        }, 2000);
+        // Приложение запущено не через Telegram, показываем страницу входа
+        setActiveTab(TabsEnum.AUTH);
       }
     } catch (error) {
       console.error('Ошибка аутентификации:', error);
-      telegramService.showAlert('Произошла ошибка при аутентификации');
+      setActiveTab(TabsEnum.AUTH);
     } finally {
       setIsLoading(false);
     }
@@ -102,7 +99,7 @@ function App() {
 
   return (
     <>
-      {activeTab === TabsEnum.AUTH && <AuthPage onChangeTab={onAuth} isTelegramReady={isTelegramReady} />}
+      {activeTab === TabsEnum.AUTH && <AuthPage onChangeTab={onAuth} />}
       {activeTab === TabsEnum.MAIN && <MainPage />}
     </>
   );

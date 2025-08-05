@@ -4,7 +4,6 @@ import { TabsEnum } from "../../lib/constants";
 
 type PropsT = {
   onChangeTab: (tab: TabsEnum) => void;
-  isTelegramReady?: boolean;
 };
 
 export const AuthPage: FC<PropsT> = (props) => {
@@ -14,19 +13,16 @@ export const AuthPage: FC<PropsT> = (props) => {
         <h1 className="text-6xl text-center font-extrabold text-x-purple m-0 p-0">
           РИМ
         </h1>
-        {props.isTelegramReady && (
-          <div className="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-sm">
-            Telegram
-          </div>
-        )}
       </div>
       <div className="flex flex-col items-center w-screen px-3 pb-10 box-border">
-        <button
-          onClick={() => props.onChangeTab(TabsEnum.MAIN)}
-          className="w-full text-white px-2 py-3 bg-x-purple rounded-md"
+        <a
+          href="https://t.me/ingroupsts_org_bot/RIM"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="w-full text-white px-2 py-3 bg-x-purple rounded-md text-center block"
         >
-          {props.isTelegramReady ? 'Продолжить' : 'Войти'}
-        </button>
+          Войти через Telegram
+        </a>
       </div>
     </div>
   );
