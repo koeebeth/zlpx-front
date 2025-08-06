@@ -33,12 +33,15 @@ function App() {
           if (user) {
             console.log('Пользователь Telegram найден:', user);
             // Автоматически аутентифицируемся
-            const authSuccess = await telegramService.authenticateWithBackend();
-            if (authSuccess) {
+            const authResult = await telegramService.authenticateWithBackend();
+            if (authResult.success) {
               console.log('Автоматическая аутентификация успешна');
+              // Сохраняем профиль пользователя
+              if (authResult.userProfile) {
+                telegramService.saveUserProfile(authResult.userProfile);
+              }
               setActiveTab(TabsEnum.MAIN);
               setIsTelegramReady(true);
-              // Профиль пользователя будет загружен автоматически в UserProvider
             } else {
               console.log('Автоматическая аутентификация не удалась, показываем страницу входа');
               setActiveTab(TabsEnum.AUTH);
@@ -75,8 +78,12 @@ function App() {
       
       // Если это Telegram Mini App, используем Telegram аутентификацию
       if (telegramService.isTelegramWebApp()) {
-        const authSuccess = await telegramService.authenticateWithBackend();
-        if (authSuccess) {
+        const authResult = await telegramService.authenticateWithBackend();
+        if (authResult.success) {
+          // Сохраняем профиль пользователя
+          if (authResult.userProfile) {
+            telegramService.saveUserProfile(authResult.userProfile);
+          }
           setActiveTab(TabsEnum.MAIN);
           setIsTelegramReady(true);
         } else {

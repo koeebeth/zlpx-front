@@ -77,11 +77,17 @@ export class TelegramService {
     return this.initData;
   }
 
-  async authenticateWithBackend(): Promise<boolean> {
+  saveUserProfile(userProfile: any): void {
+    if (userProfile) {
+      localStorage.setItem('user_profile', JSON.stringify(userProfile));
+    }
+  }
+
+  async authenticateWithBackend(): Promise<{ success: boolean; userProfile?: any }> {
     try {
       if (!this.initData) {
         console.error('Init data не найден');
-        return false;
+        return { success: false };
       }
 
       const response = await fetch('/auth/telegram', {
@@ -90,21 +96,24 @@ export class TelegramService {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          init_data: this.initData!,
+          init_data: this.initData,
         }),
       });
 
       if (response.ok) {
         const result = await response.json();
         console.log('Аутентификация успешна:', result);
-        return true;
+        return { 
+          success: true, 
+          userProfile: result.user_profile 
+        };
       } else {
         console.error('Ошибка аутентификации:', response.statusText);
-        return false;
+        return { success: false };
       }
     } catch (error) {
       console.error('Ошибка при аутентификации:', error);
-      return false;
+      return { success: false };
     }
   }
 
