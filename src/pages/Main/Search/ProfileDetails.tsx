@@ -26,16 +26,17 @@ type PropsT = {
 
 export const ProfileDetails: FC<PropsT> = ({ user, setUser, updateUserProfile, isSelf, useContext = false }) => {
   const [isEditingContacts, setIsEditingContacts] = useState(false);
+  const [isEditingPersonalInfo, setIsEditingPersonalInfo] = useState(false);
   const contextUser = useUser();
   
   // Используем контекст или пропсы в зависимости от флага
   const currentUser = useContext ? contextUser.user : user;
   const currentSetUser = useContext ? contextUser.setUser : setUser;
   const currentUpdateUserProfile = useContext ? contextUser.updateUserProfile : updateUserProfile;
-  // const [isEditingPersonalInfo, setIsEditingPersonalInfo] = useState(false);
+
   return (
     <div className="flex flex-col gap-2 p-2 bg-zinc-300 flex-1 dark:bg-zinc-900 overflow-scroll">
-      <div className="rounded-lg bg-zinc-400 dark:bg-zinc-800 flex items-center justify-between p-6 relative">
+      <div className="rounded-lg bg-zinc-400 dark:bg-zinc-800 flex items-center justify-between gap-1 p-6 relative">
         {isSelf && (
           <button
             className="absolute top-2 right-2"
@@ -88,15 +89,18 @@ export const ProfileDetails: FC<PropsT> = ({ user, setUser, updateUserProfile, i
             </div>
           </>
         )}
-        <Avatar sx={{ width: 100, height: 100, backgroundColor: "blueviolet" }}>
+        <Avatar sx={{ width: 90, height: 90, backgroundColor: "blueviolet" }}>
           ТУ
         </Avatar>
       </div>
       <div className="rounded-lg bg-zinc-400 dark:bg-zinc-800 p-6 relative">
         {isSelf && (
-          <button className="absolute top-2 right-2">
+          <button
+            className="absolute top-2 right-2"
+            onClick={() => setIsEditingPersonalInfo((prev) => !prev)}
+          >
             <span className="material-symbols-outlined dark:text-light-purple">
-              edit_square
+              {isEditingPersonalInfo ? "close" : "edit_square"}
             </span>
           </button>
         )}
@@ -127,10 +131,10 @@ export const ProfileDetails: FC<PropsT> = ({ user, setUser, updateUserProfile, i
             <b>{formatDriverLicense(currentUser.has_driver_license)}</b>
           </p>
           <p className="dark: text-zinc-300 text-sm">
-            Год вступления в СТС: <b>{user.year_of_admission}</b>
+            Год вступления в СТС: <b>{currentUser.year_of_admission}</b>
           </p>
           <p className="dark: text-zinc-300 text-sm">
-            Статус: <b>{formatStatus(user.status)}</b>
+            Статус: <b>{formatStatus(currentUser.status)}</b>
           </p>
         </div>
       </div>
