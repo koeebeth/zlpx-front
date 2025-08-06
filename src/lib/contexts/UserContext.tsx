@@ -1,6 +1,5 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { UserProfile } from '../../types';
-import { DefaultService } from '../../types';
 import { telegramService } from '../telegram';
 
 // Fallback данные пользователя
@@ -55,12 +54,19 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         return;
       }
 
-      const response = await DefaultService.getUserProfileUserTelegramIdGet(telegramUser.id);
-      if (response.user_profile) {
-        setUser(response.user_profile);
-        console.log('Профиль пользователя загружен:', response.user_profile);
+      // Получаем профиль из localStorage (сохранен при аутентификации)
+      const storedProfile = localStorage.getItem('user_profile');
+      if (storedProfile) {
+        try {
+          const profile = JSON.parse(storedProfile);
+          setUser(profile);
+          console.log('Профиль пользователя загружен из localStorage:', profile);
+        } catch (e) {
+          console.warn('Ошибка парсинга профиля из localStorage:', e);
+          setUser(FALLBACK_USER);
+        }
       } else {
-        console.warn('Профиль пользователя не найден, используем fallback');
+        console.warn('Профиль пользователя не найден в localStorage, используем fallback');
         setUser(FALLBACK_USER);
       }
     } catch (err) {
