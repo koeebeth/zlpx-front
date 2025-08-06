@@ -2,6 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
  
+import { UserPrinter } from '../../lib/api-types';
 import type { UserDriverLicense } from './UserDriverLicense';
 import type { UserStatus } from './UserStatus';
 export type UserProfile = {
@@ -52,7 +53,7 @@ export type UserProfile = {
     /**
      * Если ли у тебя принтер?
      */
-    has_printer: UserStatus;
+    has_printer: UserPrinter;
     /**
      * Можем ли мы проводить ночь креатива/ночь оформления у тебя дома?
      */

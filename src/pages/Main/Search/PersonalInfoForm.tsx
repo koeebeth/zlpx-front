@@ -185,4 +185,4 @@ export const PersonalInfoForm: FC<PropsT> = ({ user, setUser }) => {
       </button>
     </form>
   );
-}; 
+};
