@@ -1,5 +1,5 @@
 import isEmpty from "lodash/isEmpty";
-import { FC } from "react";
+import { FC, useState } from "react";
 import { useForm } from "react-hook-form";
 import { SubmitHandler } from "react-hook-form";
 
@@ -23,6 +23,8 @@ const inputClassesError =
   "border-1 border-red-900 rounded-sm px-1 outline-0 m-0 block flex-1";
 
 export const ContactForm: FC<PropsT> = ({ user, onSubmit }) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
   const {
     register: registerContact,
     formState: { errors },
@@ -32,8 +34,13 @@ export const ContactForm: FC<PropsT> = ({ user, onSubmit }) => {
     defaultValues: user,
   });
 
-  const onContactSubmit: SubmitHandler<ContactFormFields> = (data) => {
-    onSubmit({ ...user, ...data });
+  const onContactSubmit: SubmitHandler<ContactFormFields> = async (data) => {
+    setIsSubmitting(true);
+    try {
+      await onSubmit({ ...user, ...data });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -73,11 +80,21 @@ export const ContactForm: FC<PropsT> = ({ user, onSubmit }) => {
               {...registerContact("phone_number", { required: true, pattern: /(\+(\d|\d\s){11})|((\d|\d\s){11})/})}
             />
           </h4>
-        <button className="absolute bottom-2 right-2" type="submit">
+        <button 
+          className="absolute bottom-2 right-2" 
+          type="submit"
+          disabled={isSubmitting || !isEmpty(errors)}
+        >
           <span
-            className={`material-symbols-outlined ${!isEmpty(errors) ? "text-zinc-600" : "text-light-purple"}`}
+            className={`material-symbols-outlined ${
+              isSubmitting 
+                ? "text-zinc-600 animate-spin" 
+                : !isEmpty(errors) 
+                  ? "text-zinc-600" 
+                  : "text-light-purple"
+            }`}
           >
-            check
+            {isSubmitting ? "sync" : "check"}
           </span>
         </button>
         </form>

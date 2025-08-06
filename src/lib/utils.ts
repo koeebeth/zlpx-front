@@ -42,7 +42,7 @@ export const formatDriverLicense = (info: number) => {
 export const formatStatus = (info: number) => {
   switch (info) {
     case 1:
-      return "Работает";
+      return "Рабочка";
     case 2:
       return "Активный";
     case 3:

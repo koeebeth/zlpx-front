@@ -13,12 +13,24 @@ const initializeTelegramSDK = async () => {
   try {
     await init();
 
-
     if (miniApp.ready.isAvailable()) {
       await miniApp.ready();
       console.log('Mini App готово');
+      
+      // Получаем данные пользователя через window.Telegram
+      const telegramUser = (window as any).Telegram?.WebApp?.initDataUnsafe?.user;
+      if (telegramUser) {
+        console.log('Пользователь Telegram:', telegramUser);
+        localStorage.setItem('telegram_user', JSON.stringify(telegramUser));
+      }
+      
+      // Получаем initData для аутентификации
+      const initData = (window as any).Telegram?.WebApp?.initData;
+      if (initData) {
+        console.log('Init data получен');
+        localStorage.setItem('telegram_init_data', initData);
+      }
     }
-
 
   } catch (error) {
     console.error('Ошибка инициализации:', error);

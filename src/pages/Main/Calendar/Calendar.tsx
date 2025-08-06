@@ -46,18 +46,18 @@ export const CalendarTab: FC = () => {
           <Loader />
         ) : (
           map(events, (dayEvents, date) => (
-            <div className="w-full bg-zinc-800 rounded-md p-4">
+            <div key={date} className="w-full bg-zinc-800 rounded-md p-4">
               <h3 className="uppercase text-zinc-500 mb-3 text-sm">
                 {formatCalendarDate(date)}
               </h3>
               {isEmpty(dayEvents) && <p className="text-lg mb-1 dark:text-zinc-600">Нет событий</p>}
               {map(dayEvents, (evt, idx) => (
-                <>
+                <div key={`${date}-${idx}`}>
                   <CalendarBlock event={evt} />
                   {idx !== dayEvents.length - 1 && (
                     <div className="h-0.5 mx-auto w-full m-0 bg-zinc-200 dark:bg-zinc-700 my-4"></div>
                   )}
-                </>
+                </div>
               ))}
             </div>
           ))
