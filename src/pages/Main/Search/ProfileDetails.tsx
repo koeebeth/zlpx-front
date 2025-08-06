@@ -15,6 +15,7 @@ import {
 } from "../../../lib/utils";
 import { type UserProfile } from "../../../types";
 import { ContactForm } from "./ContactForm";
+import { PersonalInfoForm } from "./PersonalInfoForm";
 
 type PropsT = {
   user: UserProfile;
@@ -105,38 +106,46 @@ export const ProfileDetails: FC<PropsT> = ({ user, setUser, updateUserProfile, i
           </button>
         )}
         <h4 className="dark:text-zinc-400 mb-4">Личная Информация</h4>
-        <div className="flex flex-col gap-3">
-          <p className="dark: text-zinc-300 text-sm">
-            Живет возле станции: <b>{currentUser?.live_metro_station.join(",")}</b>
-          </p>
-          <p className="dark: text-zinc-300 text-sm">
-            Учится возле станции: <b>{currentUser?.study_metro_station.join(",")}</b>
-          </p>
-          <p className="dark: text-zinc-300 text-sm">
-            Дата рождения:{" "}
-            <b>
-              {format(new Date(currentUser?.date_of_birth), "d MMMM yyyy", {
-                locale: ru,
-              })}
-            </b>
-          </p>
-          <p className="dark: text-zinc-300 text-sm">
-            Есть принтер: <b>{formatPrintInfo(currentUser.has_printer)}</b>
-          </p>
-          <p className="dark: text-zinc-300 text-sm">
-            Может проводить НК: <b>{formatBool(currentUser.can_host_night)}</b>
-          </p>
-          <p className="dark: text-zinc-300 text-sm">
-            Есть права/машина:{" "}
-            <b>{formatDriverLicense(currentUser.has_driver_license)}</b>
-          </p>
-          <p className="dark: text-zinc-300 text-sm">
-            Год вступления в СТС: <b>{currentUser.year_of_admission}</b>
-          </p>
-          <p className="dark: text-zinc-300 text-sm">
-            Статус: <b>{formatStatus(currentUser.status)}</b>
-          </p>
-        </div>
+        {isEditingPersonalInfo ? (
+          <PersonalInfoForm
+            user={currentUser}
+            setUser={currentSetUser}
+            updateUserProfile={currentUpdateUserProfile}
+          />
+        ) : (
+          <div className="flex flex-col gap-3 animate-fadein">
+            <p className="dark: text-zinc-300 text-sm">
+              Живет возле станции: <b>{currentUser?.live_metro_station.join(",")}</b>
+            </p>
+            <p className="dark: text-zinc-300 text-sm">
+              Учится возле станции: <b>{currentUser?.study_metro_station.join(",")}</b>
+            </p>
+            <p className="dark: text-zinc-300 text-sm">
+              Дата рождения:{" "}
+              <b>
+                {format(new Date(currentUser?.date_of_birth), "d MMMM yyyy", {
+                  locale: ru,
+                })}
+              </b>
+            </p>
+            <p className="dark: text-zinc-300 text-sm">
+              Есть принтер: <b>{formatPrintInfo(currentUser.has_printer)}</b>
+            </p>
+            <p className="dark: text-zinc-300 text-sm">
+              Может проводить НК: <b>{formatBool(currentUser.can_host_night)}</b>
+            </p>
+            <p className="dark: text-zinc-300 text-sm">
+              Есть права/машина:{" "}
+              <b>{formatDriverLicense(currentUser.has_driver_license)}</b>
+            </p>
+            <p className="dark: text-zinc-300 text-sm">
+              Год вступления в СТС: <b>{currentUser.year_of_admission}</b>
+            </p>
+            <p className="dark: text-zinc-300 text-sm">
+              Статус: <b>{formatStatus(currentUser.status)}</b>
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );
