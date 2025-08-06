@@ -109,8 +109,10 @@ export const ProfileDetails: FC<PropsT> = ({ user, setUser, updateUserProfile, i
         {isEditingPersonalInfo ? (
           <PersonalInfoForm
             user={currentUser}
-            setUser={currentSetUser}
-            updateUserProfile={currentUpdateUserProfile}
+            setUser={(data) => {
+              currentSetUser(data);
+              setIsEditingPersonalInfo(false);
+            }}
           />
         ) : (
           <div className="flex flex-col gap-3 animate-fadein">

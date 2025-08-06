@@ -1,148 +1,187 @@
-import { FC, useState } from "react";
-import { type UserProfile } from "../../../types";
-import { telegramService } from "../../../lib/telegram";
+import { entries, isEmpty, split } from "lodash";
+import { FC } from "react";
+import { useForm } from "react-hook-form";
+
+import {
+  UserDriverLicenseDesc,
+  UserPrinterDesc,
+  UserStatusDesc,
+} from "../../../lib/api-types";
+import { UserProfile } from "../../../types";
 
 type PropsT = {
   user: UserProfile;
-  setUser: (payload: UserProfile) => void;
-  updateUserProfile?: (fields: Partial<UserProfile>) => Promise<boolean>;
+  setUser: (user: UserProfile) => void;
 };
 
-export const PersonalInfoForm: FC<PropsT> = ({ user, setUser, updateUserProfile }) => {
-  const [formData, setFormData] = useState({
-    live_metro_station: user.live_metro_station || [],
-    study_metro_station: user.study_metro_station || [],
-    date_of_birth: user.date_of_birth ? new Date(user.date_of_birth).toISOString().split('T')[0] : '',
-    has_printer: user.has_printer,
-    can_host_night: user.can_host_night,
-    has_driver_license: user.has_driver_license,
-    year_of_admission: user.year_of_admission,
-    status: user.status
+type PersonalInfoFormFields = Omit<
+  UserProfile,
+  | "full_name"
+  | "telegram_nickname"
+  | "vk_nickname"
+  | "phone_number"
+  | "telegram_id"
+  | "study_metro_station"
+  | "live_metro_station"
+  | "can_host_night"
+> & {
+  study_metro_station: string;
+  live_metro_station: string;
+  can_host_night: string;
+};
+
+const inputSectionClasses =
+  "flex gap-3 justify-between w-full items-center dark:text-zinc-300 text-sm";
+
+const inputClasses = "bg-zinc-700 outline-0 rounded-sm w-1/2 px-1 py-0.5";
+const inputClassesError =
+  "bg-zinc-700 outline-0 border-1 border-red-800 rounded-sm w-1/2 px-1 py-0.5";
+
+export const PersonalInfoForm: FC<PropsT> = ({ user, setUser }) => {
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+  } = useForm<PersonalInfoFormFields>({
+    mode: "onChange",
   });
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    const changedFields: Partial<UserProfile> = {};
-    if (formData.live_metro_station !== user.live_metro_station) changedFields.live_metro_station = formData.live_metro_station;
-    if (formData.study_metro_station !== user.study_metro_station) changedFields.study_metro_station = formData.study_metro_station;
-    if (formData.date_of_birth !== (user.date_of_birth ? new Date(user.date_of_birth).toISOString().split('T')[0] : '')) changedFields.date_of_birth = formData.date_of_birth;
-    if (formData.has_printer !== user.has_printer) changedFields.has_printer = formData.has_printer;
-    if (formData.can_host_night !== user.can_host_night) changedFields.can_host_night = formData.can_host_night;
-    if (formData.has_driver_license !== user.has_driver_license) changedFields.has_driver_license = formData.has_driver_license;
-    if (formData.year_of_admission !== user.year_of_admission) changedFields.year_of_admission = formData.year_of_admission;
-    if (formData.status !== user.status) changedFields.status = formData.status;
-
-    if (updateUserProfile && Object.keys(changedFields).length > 0) {
-      const success = await updateUserProfile(changedFields);
-      if (success) {
-        setUser({ ...user, ...changedFields });
-        telegramService.showAlert("Личная информация обновлена!");
-      } else {
-        telegramService.showAlert("Ошибка при обновлении информации");
-      }
-    } else {
-      setUser({ ...user, ...changedFields });
-    }
-  };
-
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-      <div>
-        <label className="block text-sm dark:text-zinc-300 mb-1">Станции метро (живет):</label>
+    <form
+      className="flex flex-col gap-3 pb-8"
+      onSubmit={handleSubmit((data) => {
+        setUser({
+          ...user,
+          has_driver_license: Number(data.has_driver_license),
+          has_printer: Number(data.has_printer),
+          status: Number(data.status),
+          live_metro_station: split(data.live_metro_station, ","),
+          study_metro_station: split(data.study_metro_station, ","),
+          date_of_birth: new Date(data.date_of_birth)
+            .toISOString()
+            .split("T")[0],
+          year_of_admission: data.year_of_admission,
+          can_host_night: data.can_host_night === "1",
+        });
+      })}
+    >
+      <div className={inputSectionClasses}>
+        <label>Живет возле станции:</label>
         <input
+          className={
+            errors.live_metro_station ? inputClassesError : inputClasses
+          }
           type="text"
-          value={formData.live_metro_station.join(', ')}
-          onChange={(e) => setFormData(prev => ({ ...prev, live_metro_station: e.target.value.split(',').map(s => s.trim()) }))}
-          className="w-full p-2 rounded bg-zinc-300 dark:bg-zinc-700 text-sm"
-          placeholder="Введите станции через запятую"
+          defaultValue={user?.live_metro_station.join(",")}
+          {...register("live_metro_station")}
         />
       </div>
-      
-      <div>
-        <label className="block text-sm dark:text-zinc-300 mb-1">Станции метро (учится):</label>
+      <div className={inputSectionClasses}>
+        <label>Учится возле станции:</label>
         <input
+          className={
+            errors.study_metro_station ? inputClassesError : inputClasses
+          }
           type="text"
-          value={formData.study_metro_station.join(', ')}
-          onChange={(e) => setFormData(prev => ({ ...prev, study_metro_station: e.target.value.split(',').map(s => s.trim()) }))}
-          className="w-full p-2 rounded bg-zinc-300 dark:bg-zinc-700 text-sm"
-          placeholder="Введите станции через запятую"
+          defaultValue={user.study_metro_station.join(",")}
+          {...register("study_metro_station")}
         />
       </div>
-      
-      <div>
-        <label className="block text-sm dark:text-zinc-300 mb-1">Дата рождения:</label>
+      <div className={inputSectionClasses}>
+        <label>Дата рождения:</label>
         <input
+          className={errors.date_of_birth ? inputClassesError : inputClasses}
           type="date"
-          value={formData.date_of_birth}
-          onChange={(e) => setFormData(prev => ({ ...prev, date_of_birth: e.target.value }))}
-          className="w-full p-2 rounded bg-zinc-300 dark:bg-zinc-700 text-sm"
+          defaultValue={user.date_of_birth}
+          {...register("date_of_birth")}
         />
       </div>
-      
-      <div className="flex items-center gap-2">
-        <input
-          type="checkbox"
-          id="has_printer"
-          checked={formData.has_printer}
-          onChange={(e) => setFormData(prev => ({ ...prev, has_printer: e.target.checked }))}
-          className="rounded"
-        />
-        <label htmlFor="has_printer" className="text-sm dark:text-zinc-300">Есть принтер</label>
-      </div>
-      
-      <div className="flex items-center gap-2">
-        <input
-          type="checkbox"
-          id="can_host_night"
-          checked={formData.can_host_night}
-          onChange={(e) => setFormData(prev => ({ ...prev, can_host_night: e.target.checked }))}
-          className="rounded"
-        />
-        <label htmlFor="can_host_night" className="text-sm dark:text-zinc-300">Может проводить НК</label>
-      </div>
-      
-      <div className="flex items-center gap-2">
-        <input
-          type="checkbox"
-          id="has_driver_license"
-          checked={formData.has_driver_license}
-          onChange={(e) => setFormData(prev => ({ ...prev, has_driver_license: e.target.checked }))}
-          className="rounded"
-        />
-        <label htmlFor="has_driver_license" className="text-sm dark:text-zinc-300">Есть права/машина</label>
-      </div>
-      
-      <div>
-        <label className="block text-sm dark:text-zinc-300 mb-1">Год вступления в СТС:</label>
-        <input
-          type="number"
-          value={formData.year_of_admission}
-          onChange={(e) => setFormData(prev => ({ ...prev, year_of_admission: parseInt(e.target.value) || 0 }))}
-          className="w-full p-2 rounded bg-zinc-300 dark:bg-zinc-700 text-sm"
-          min="2000"
-          max="2030"
-        />
-      </div>
-      
-      <div>
-        <label className="block text-sm dark:text-zinc-300 mb-1">Статус:</label>
+      <div className={inputSectionClasses}>
+        <label>Есть принтер:</label>
         <select
-          value={formData.status}
-          onChange={(e) => setFormData(prev => ({ ...prev, status: e.target.value as any }))}
-          className="w-full p-2 rounded bg-zinc-300 dark:bg-zinc-700 text-sm"
+          className={errors.has_printer ? inputClassesError : inputClasses}
+          {...register("has_printer")}
         >
-          <option value="active">Активный</option>
-          <option value="inactive">Неактивный</option>
-          <option value="alumni">Выпускник</option>
+          <option value={user.has_printer} selected>
+            {UserPrinterDesc[user.has_printer]}
+          </option>
+          {entries(UserPrinterDesc).map(
+            ([val, label]) =>
+              Number(val) !== user.has_printer && (
+                <option value={Number(val)}>{label}</option>
+              )
+          )}
         </select>
       </div>
-      
-      <button
-        type="submit"
-        className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm"
-      >
-        Сохранить
+      <div className={inputSectionClasses}>
+        <label>Может проводить НК:</label>
+        <select
+          {...register("can_host_night")}
+          className={errors.can_host_night ? inputClassesError : inputClasses}
+        >
+          <option value={1} selected={user.can_host_night}>
+            Да
+          </option>
+          <option value={0} selected={!user.can_host_night}>
+            Нет
+          </option>
+        </select>
+      </div>
+      <div className={inputSectionClasses}>
+        <label>Есть права/машина:</label>
+        <select
+          className={
+            errors.has_driver_license ? inputClassesError : inputClasses
+          }
+          {...register("has_driver_license")}
+        >
+          <option value={user.has_driver_license} selected>
+            {UserDriverLicenseDesc[user.has_driver_license]}
+          </option>
+          {entries(UserDriverLicenseDesc).map(
+            ([val, label]) =>
+              Number(val) !== user.has_printer && (
+                <option value={Number(val)}>{label}</option>
+              )
+          )}
+        </select>
+      </div>
+      <div className={inputSectionClasses}>
+        <label>Год вступления в СТС:</label>
+        <input
+          type="number"
+          className={
+            errors.year_of_admission ? inputClassesError : inputClasses
+          }
+          defaultValue={user.year_of_admission}
+          {...register("year_of_admission", {
+            min: 1900,
+            max: new Date().getFullYear(),
+          })}
+        />
+      </div>
+      <div className={inputSectionClasses}>
+        <label>Статус:</label>
+        <select
+          className={errors.status ? inputClassesError : inputClasses}
+          {...register("status")}
+        >
+          <option value={user.status} selected>
+            {UserStatusDesc[user.status]}
+          </option>
+          {entries(UserStatusDesc).map(
+            ([val, label]) =>
+              Number(val) !== user.status && (
+                <option value={Number(val)}>{label}</option>
+              )
+          )}
+        </select>
+      </div>
+      <button className="absolute bottom-2 right-2" type="submit">
+        <span
+          className={`material-symbols-outlined ${!isEmpty(errors) ? "text-zinc-600" : "text-light-purple"}`}
+        >
+          check
+        </span>
       </button>
     </form>
   );
