@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Loader } from "./components/Loader";
 import { TabsEnum, DEV_CONFIG } from "./lib/constants";
 import { telegramService } from "./lib/telegram";
+import { UserProvider } from "./lib/contexts/UserContext";
 import { AuthPage } from "./pages/Auth/Auth";
 import { MainPage } from "./pages/Main/Main";
 
@@ -37,6 +38,7 @@ function App() {
               console.log('Автоматическая аутентификация успешна');
               setActiveTab(TabsEnum.MAIN);
               setIsTelegramReady(true);
+              // Профиль пользователя будет загружен автоматически в UserProvider
             } else {
               console.log('Автоматическая аутентификация не удалась, показываем страницу входа');
               setActiveTab(TabsEnum.AUTH);
@@ -98,10 +100,10 @@ function App() {
   }
 
   return (
-    <>
+    <UserProvider>
       {activeTab === TabsEnum.AUTH && <AuthPage onChangeTab={onAuth} />}
       {activeTab === TabsEnum.MAIN && <MainPage />}
-    </>
+    </UserProvider>
   );
 }
 
