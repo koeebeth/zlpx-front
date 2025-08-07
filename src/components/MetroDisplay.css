@@ -1,0 +1,64 @@
+.metro-display {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.metro-display-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.metro-display-line {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  font-size: 9px;
+  min-width: 16px;
+  flex-shrink: 0;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+.metro-display-name {
+  font-weight: 500;
+}
+
+.metro-display-separator {
+  color: #666;
+}
+
+.metro-display-loading {
+  color: #666;
+  font-style: italic;
+}
+
+.metro-display-error {
+  color: #ef4444;
+  font-style: italic;
+}
+
+.metro-display-empty {
+  color: #666;
+  font-style: italic;
+}
+
+/* Темная тема */
+.dark .metro-display-separator {
+  color: #9ca3af;
+}
+
+.dark .metro-display-loading,
+.dark .metro-display-empty {
+  color: #9ca3af;
+}
+
+.dark .metro-display-error {
+  color: #f87171;
+} 
