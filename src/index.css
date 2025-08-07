@@ -46,6 +46,18 @@ html {
   color-scheme: dark;
 }
 
+/* Принудительно темная тема для всех элементов */
+* {
+  color-scheme: dark;
+}
+
+/* Отключаем автоматическое переключение темы */
+@media (prefers-color-scheme: light) {
+  html {
+    color-scheme: dark;
+  }
+}
+
 html, body {
     margin: 0;
     padding: 0;

@@ -33,12 +33,6 @@ export const CalendarTab: FC = () => {
     <>
       <div className="w-full p-4 text-center text-xl font-medium text-light-purple relative">
         Расписание
-        <button
-          className="flex justify-center items-center absolute top-5 right-4"
-          onClick={() => setBottomPanelOpen(true)}
-        >
-          <span className="material-icons material-icons-round">add</span>
-        </button>
       </div>
       {/* <Filter options={filterOptions} setOptions={setFilterOptions} /> */}
       <div className="flex flex-col items-center gap-2 overflow-scroll bg-white grow dark:bg-zinc-900 p-2">
