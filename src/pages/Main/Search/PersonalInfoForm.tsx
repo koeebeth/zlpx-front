@@ -5,7 +5,6 @@ import { useForm } from "react-hook-form";
 import {
   UserDriverLicenseDesc,
   UserPrinterDesc,
-  UserStatusDesc,
 } from "../../../lib/api-types";
 import { UserProfile } from "../../../types";
 import { MetroSelector } from "../../../components/MetroSelector";
@@ -26,6 +25,8 @@ type PersonalInfoFormFields = Omit<
   | "study_metro_station"
   | "live_metro_station"
   | "can_host_night"
+  | "status"
+  | "year_of_admission"
 > & {
   can_host_night: string;
 };
@@ -62,15 +63,13 @@ export const PersonalInfoForm: FC<PropsT> = ({ user, setUser, updateUserProfile 
       onSubmit={handleSubmit(async (data) => {
         const updatedUser = {
           ...user,
-          has_driver_license: Number(data.has_driver_license),
-          has_printer: Number(data.has_printer),
-          status: Number(data.status),
+          has_driver_license: data.has_driver_license ? Number(data.has_driver_license) : user.has_driver_license,
+          has_printer: data.has_printer ? Number(data.has_printer) : user.has_printer,
           live_metro_station: liveMetroStations,
           study_metro_station: studyMetroStations,
-          date_of_birth: new Date(data.date_of_birth)
+          date_of_birth: data.date_of_birth ? new Date(data.date_of_birth)
             .toISOString()
-            .split("T")[0],
-          year_of_admission: data.year_of_admission,
+            .split("T")[0] : user.date_of_birth,
           can_host_night: data.can_host_night === "1",
         };
 
@@ -78,11 +77,9 @@ export const PersonalInfoForm: FC<PropsT> = ({ user, setUser, updateUserProfile 
         const changedFields: Partial<UserProfile> = {};
         if (updatedUser.has_driver_license !== user.has_driver_license) changedFields.has_driver_license = updatedUser.has_driver_license;
         if (updatedUser.has_printer !== user.has_printer) changedFields.has_printer = updatedUser.has_printer;
-        if (updatedUser.status !== user.status) changedFields.status = updatedUser.status;
         if (JSON.stringify(updatedUser.live_metro_station) !== JSON.stringify(user.live_metro_station)) changedFields.live_metro_station = updatedUser.live_metro_station;
         if (JSON.stringify(updatedUser.study_metro_station) !== JSON.stringify(user.study_metro_station)) changedFields.study_metro_station = updatedUser.study_metro_station;
         if (updatedUser.date_of_birth !== user.date_of_birth) changedFields.date_of_birth = updatedUser.date_of_birth;
-        if (updatedUser.year_of_admission !== user.year_of_admission) changedFields.year_of_admission = updatedUser.year_of_admission;
         if (updatedUser.can_host_night !== user.can_host_night) changedFields.can_host_night = updatedUser.can_host_night;
 
         if (updateUserProfile && Object.keys(changedFields).length > 0) {
@@ -160,36 +157,6 @@ export const PersonalInfoForm: FC<PropsT> = ({ user, setUser, updateUserProfile 
           {...register("has_driver_license")}
         >
           {entries(UserDriverLicenseDesc).map(
-            ([val, label]) => (
-              <option key={val} value={Number(val)}>
-                {label}
-              </option>
-            )
-          )}
-        </select>
-      </div>
-      <div className={inputSectionClasses}>
-        <label>Год вступления в СТС:</label>
-        <input
-          type="number"
-          className={
-            errors.year_of_admission ? inputClassesError : inputClasses
-          }
-          defaultValue={user.year_of_admission}
-          {...register("year_of_admission", {
-            min: 1900,
-            max: new Date().getFullYear(),
-          })}
-        />
-      </div>
-      <div className={inputSectionClasses}>
-        <label>Статус:</label>
-        <select
-          className={errors.status ? inputClassesError : inputClasses}
-          defaultValue={user.status}
-          {...register("status")}
-        >
-          {entries(UserStatusDesc).map(
             ([val, label]) => (
               <option key={val} value={Number(val)}>
                 {label}

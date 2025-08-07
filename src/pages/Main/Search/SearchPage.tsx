@@ -30,12 +30,13 @@ export const SearchPage: FC = () => {
       {searchFocus ? (
         <Results />
       ) : (
-        <div className=" flex-1 dark:bg-zinc-900 p-4">
-          <div className="grid grid-cols-2 items-stretch gap-4 mx-auto">
-            <div className="h-20 bg-zinc-200 rounded-sm"></div>
-            <div className="h-20 bg-x-purple rounded-sm"></div>
-            <div className="h-20 bg-x-yellow rounded-sm"></div>
-            <div className="h-20 bg-zinc-400 rounded-sm"></div>
+        <div className="flex-1 dark:bg-zinc-900 p-4">
+          <div className="flex flex-col items-center justify-center h-full">
+            <div className="text-center">
+              <div className="text-6xl mb-4">🚧</div>
+              <h2 className="text-2xl font-bold text-zinc-300 mb-2">Поиск</h2>
+              <p className="text-zinc-500">Функция находится в разработке</p>
+            </div>
           </div>
         </div>
       )}

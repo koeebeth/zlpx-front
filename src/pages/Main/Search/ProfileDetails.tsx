@@ -11,12 +11,14 @@ import {
   formatBool,
   formatDriverLicense,
   formatPrintInfo,
-  formatStatus,
 } from "../../../lib/utils";
+import { formatCourseYear } from "../../../lib/formatters";
 import { type UserProfile } from "../../../types";
 import { ContactForm } from "./ContactForm";
 import { PersonalInfoForm } from "./PersonalInfoForm";
 import { MetroDisplay } from "../../../components/MetroDisplay";
+import { createTelegramLink, createVkLink, formatPhoneDisplay, createPhoneLink } from "../../../lib/contact-utils";
+import { getAvatarColor, getAvatarText, getAvatarImage } from "../../../lib/avatar-utils";
 
 type PropsT = {
   user: UserProfile;
@@ -76,24 +78,73 @@ export const ProfileDetails: FC<PropsT> = ({ user, setUser, updateUserProfile, i
           <>
             <div className="animate-fadein">
               <h3 className="font-semibold text-lg mb-4 dark:text-zinc-200">
-                {currentUser ? `${currentUser.full_name}` : "Имя Фамилия"}
+                {currentUser ? `${currentUser.full_name}` : "Пусто"}
               </h3>
               <h4 className="text-sm dark:text-zinc-400 mb-3 flex gap-2 items-center">
-                <VkIcon />@{currentUser?.vk_nickname}
+                <VkIcon />
+                <a 
+                  href={createVkLink(currentUser?.vk_nickname || '')} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="hover:text-blue-400 transition-colors"
+                >
+                  @{currentUser?.vk_nickname || "Пусто"}
+                </a>
               </h4>
               <h4 className="text-sm dark:text-zinc-400 mb-3 flex gap-2 items-center">
-                <TelegramIcon />@{currentUser?.telegram_nickname}
+                <TelegramIcon />
+                <a 
+                  href={createTelegramLink(currentUser?.telegram_nickname || '')} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="hover:text-blue-400 transition-colors"
+                >
+                  @{currentUser?.telegram_nickname || "Пусто"}
+                </a>
               </h4>
               <h4 className="text-sm dark:text-zinc-400 flex gap-2 items-center">
                 <span className="material-icons md-16">phone</span>
-                {currentUser?.phone_number}
+                <a 
+                  href={createPhoneLink(currentUser?.phone_number || '')}
+                  className="hover:text-blue-400 transition-colors"
+                >
+                  {currentUser?.phone_number ? formatPhoneDisplay(currentUser.phone_number) : "Пусто"}
+                </a>
               </h4>
             </div>
           </>
         )}
-        <Avatar sx={{ width: 90, height: 90, backgroundColor: "blueviolet" }}>
-          ТУ
+        <Avatar sx={{ 
+          width: 90, 
+          height: 90, 
+          backgroundColor: 'transparent',
+          fontSize: '1.5rem',
+          fontWeight: 'bold'
+        }}>
+          <img 
+            src={getAvatarImage(currentUser?.status || 0)} 
+            alt="Avatar"
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              borderRadius: '50%'
+            }}
+            onError={(e) => {
+              // Fallback на текст если изображение не загрузилось
+              const target = e.target as HTMLImageElement;
+              target.style.display = 'none';
+              const parent = target.parentElement;
+              if (parent) {
+                parent.textContent = getAvatarText(currentUser?.status || 0);
+                parent.style.backgroundColor = getAvatarColor(currentUser?.status || 0);
+              }
+            }}
+          />
         </Avatar>
+      </div>
+      <div className="text-sm dark:text-zinc-400 text-center">
+        {formatCourseYear(currentUser?.year_of_admission || new Date().getFullYear())}
       </div>
       <div className="rounded-lg bg-zinc-400 dark:bg-zinc-800 p-6 relative">
         {isSelf && (
@@ -119,34 +170,28 @@ export const ProfileDetails: FC<PropsT> = ({ user, setUser, updateUserProfile, i
         ) : (
           <div className="flex flex-col gap-3 animate-fadein">
             <div className="dark: text-zinc-300 text-sm">
-              Живет возле станции: <b><MetroDisplay stationIds={currentUser?.live_metro_station || []} /></b>
+              Живет возле станции: <b><MetroDisplay stationIds={currentUser?.live_metro_station || []} emptyText="Пусто" /></b>
             </div>
             <div className="dark: text-zinc-300 text-sm">
-              Учится возле станции: <b><MetroDisplay stationIds={currentUser?.study_metro_station || []} /></b>
+              Учится возле станции: <b><MetroDisplay stationIds={currentUser?.study_metro_station || []} emptyText="Пусто" /></b>
             </div>
             <p className="dark: text-zinc-300 text-sm">
               Дата рождения:{" "}
               <b>
-                {format(new Date(currentUser?.date_of_birth), "d MMMM yyyy", {
+                {currentUser?.date_of_birth ? format(new Date(currentUser.date_of_birth), "d MMMM yyyy", {
                   locale: ru,
-                })}
+                }) : "Пусто"}
               </b>
             </p>
             <p className="dark: text-zinc-300 text-sm">
-              Есть принтер: <b>{formatPrintInfo(currentUser.has_printer)}</b>
+              Есть принтер: <b>{currentUser?.has_printer !== undefined ? formatPrintInfo(currentUser.has_printer) : "Пусто"}</b>
             </p>
             <p className="dark: text-zinc-300 text-sm">
-              Может проводить НК: <b>{formatBool(currentUser.can_host_night)}</b>
+              Может проводить НК: <b>{currentUser?.can_host_night !== undefined ? formatBool(currentUser.can_host_night) : "Пусто"}</b>
             </p>
             <p className="dark: text-zinc-300 text-sm">
               Есть права/машина:{" "}
-              <b>{formatDriverLicense(currentUser.has_driver_license)}</b>
-            </p>
-            <p className="dark: text-zinc-300 text-sm">
-              Год вступления в СТС: <b>{currentUser.year_of_admission}</b>
-            </p>
-            <p className="dark: text-zinc-300 text-sm">
-              Статус: <b>{formatStatus(currentUser.status)}</b>
+              <b>{currentUser?.has_driver_license !== undefined ? formatDriverLicense(currentUser.has_driver_license) : "Пусто"}</b>
             </p>
           </div>
         )}

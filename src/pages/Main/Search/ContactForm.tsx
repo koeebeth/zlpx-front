@@ -6,6 +6,7 @@ import { SubmitHandler } from "react-hook-form";
 import TelegramIcon from "../../../assets/telegram.svg?react";
 import VkIcon from "../../../assets/vk.svg?react";
 import { UserProfile } from "../../../types";
+import { formatCourseYear } from "../../../lib/formatters";
 
 type PropsT = {
   user: UserProfile;
@@ -59,7 +60,7 @@ export const ContactForm: FC<PropsT> = ({ user, onSubmit }) => {
             <input
               type="text"
               className={errors.vk_nickname ? inputClassesError : inputClasses}
-              {...registerContact("vk_nickname", { required: true })}
+              {...registerContact("vk_nickname")}
             />
           </h4>
           <h4 className="text-sm dark:text-zinc-400 mb-3 flex gap-2 items-center">
@@ -69,7 +70,7 @@ export const ContactForm: FC<PropsT> = ({ user, onSubmit }) => {
               className={
                 errors.telegram_nickname ? inputClassesError : inputClasses
               }
-              {...registerContact("telegram_nickname", { required: true })}
+              {...registerContact("telegram_nickname")}
             />
           </h4>
           <h4 className="text-sm dark:text-zinc-400 flex gap-2 items-center">
@@ -77,8 +78,13 @@ export const ContactForm: FC<PropsT> = ({ user, onSubmit }) => {
             <input
               type="text"
               className={errors.phone_number ? inputClassesError : inputClasses}
-              {...registerContact("phone_number", { required: true, pattern: /(\+(\d|\d\s){11})|((\d|\d\s){11})/})}
+              {...registerContact("phone_number")}
             />
+          </h4>
+          <h4 className="text-sm dark:text-zinc-400 flex gap-2 items-center">
+            <span className="text-zinc-600 dark:text-zinc-500">
+              {formatCourseYear(user.year_of_admission)}
+            </span>
           </h4>
         <button 
           className="absolute bottom-2 right-2" 
