@@ -6,6 +6,12 @@ export const enum TabsEnum {
   PROFILE = "PROFILE",
 }
 
+// API конфигурация
+export const API_CONFIG = {
+  // Базовый URL для API
+  BASE_PATH: import.meta.env.VITE_API_BASE_URL || 'https://api.ingroupsts.ru',
+};
+
 // Переменные разработки
 export const DEV_CONFIG = {
   // Пропустить Telegram аутентификацию в режиме разработки

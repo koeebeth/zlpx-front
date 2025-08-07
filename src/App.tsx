@@ -1,59 +1,55 @@
 import { useEffect, useState } from "react";
 
 import { Loader } from "./components/Loader";
-import { TabsEnum, DEV_CONFIG } from "./lib/constants";
+import { DebugButton } from "./components/DebugButton";
+import { TabsEnum } from "./lib/constants";
 import { telegramService } from "./lib/telegram";
-import { UserProvider } from "./lib/contexts/UserContext";
+import { useTelegramAuth } from "./hooks/useTelegramAuth";
+import { UserProvider, useUser } from "./lib/contexts/UserContext";
 import { AuthPage } from "./pages/Auth/Auth";
 import { MainPage } from "./pages/Main/Main";
+import { logger } from "./lib/logger";
 
-function App() {
+function AppContent() {
   const [activeTab, setActiveTab] = useState<TabsEnum | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isTelegramReady, setIsTelegramReady] = useState(false);
+  const { updateUserFromAuth } = useUser();
+  const { authenticate } = useTelegramAuth();
+
+  // Отслеживаем изменения activeTab
+  useEffect(() => {
+    logger.log('🎯 activeTab изменился на:', activeTab);
+  }, [activeTab]);
 
   useEffect(() => {
     const initializeApp = async () => {
       try {
         await telegramService.initialize();
         
-        // В режиме разработки пропускаем Telegram аутентификацию
-        if (DEV_CONFIG.SKIP_TELEGRAM_AUTH) {
-          console.log('🔧 Режим разработки: пропускаем Telegram аутентификацию');
-          setActiveTab(TabsEnum.MAIN);
-          setIsTelegramReady(false);
-          return;
-        }
-        
         // Проверяем, запущено ли приложение в Telegram
-        if (telegramService.isTelegramWebApp()) {
-          const user = telegramService.getUser();
-          if (user) {
-            console.log('Пользователь Telegram найден:', user);
-            // Автоматически аутентифицируемся
-            const authResult = await telegramService.authenticateWithBackend();
-            if (authResult.success) {
-              console.log('Автоматическая аутентификация успешна');
-              // Сохраняем профиль пользователя
-              if (authResult.userProfile) {
-                telegramService.saveUserProfile(authResult.userProfile);
-              }
-              setActiveTab(TabsEnum.MAIN);
-              setIsTelegramReady(true);
-            } else {
-              console.log('Автоматическая аутентификация не удалась, показываем страницу входа');
-              setActiveTab(TabsEnum.AUTH);
-            }
-          } else {
-            console.log('Пользователь Telegram не найден, показываем страницу входа');
-            setActiveTab(TabsEnum.AUTH);
+        logger.log('🔍 Проверяем, запущено ли приложение в Telegram...');
+        const isTelegram = telegramService.isTelegramWebApp();
+        logger.log('📱 Приложение в Telegram:', isTelegram);
+        
+        // Единственный запрос аутентификации
+        logger.log('🔄 Начинаем аутентификацию...');
+        const authResult = await authenticate(telegramService.getInitData() || '');
+        logger.log('📊 Результат аутентификации:', authResult);
+        
+        if (authResult.success) {
+          logger.log('✅ Аутентификация успешна');
+          if (authResult.userProfile) {
+            telegramService.saveUserProfile(authResult.userProfile);
+            localStorage.setItem('user_profile', JSON.stringify(authResult.userProfile));
+            updateUserFromAuth(authResult.userProfile);
           }
+          setActiveTab(TabsEnum.MAIN);
         } else {
-          console.log('Приложение запущено вне Telegram, показываем страницу входа');
+          logger.log('❌ Аутентификация не удалась, показываем страницу входа');
           setActiveTab(TabsEnum.AUTH);
         }
       } catch (error) {
-        console.error('Ошибка инициализации:', error);
+        logger.error('Ошибка инициализации:', error);
         setActiveTab(TabsEnum.AUTH);
       } finally {
         setIsLoading(false);
@@ -61,43 +57,9 @@ function App() {
     };
 
     initializeApp();
-  }, []);
+  }, [updateUserFromAuth]);
 
-  const onAuth = async () => {
-    setIsLoading(true);
-    
-    try {
-      // В режиме разработки пропускаем аутентификацию
-      if (DEV_CONFIG.SKIP_TELEGRAM_AUTH) {
-        console.log('🔧 Режим разработки: пропускаем аутентификацию');
-        setActiveTab(TabsEnum.MAIN);
-        return;
-      }
-      
-      // Если это Telegram Mini App, используем Telegram аутентификацию
-      if (telegramService.isTelegramWebApp()) {
-        const authResult = await telegramService.authenticateWithBackend();
-        if (authResult.success) {
-          // Сохраняем профиль пользователя
-          if (authResult.userProfile) {
-            telegramService.saveUserProfile(authResult.userProfile);
-          }
-          setActiveTab(TabsEnum.MAIN);
-          setIsTelegramReady(true);
-        } else {
-          telegramService.showAlert('Ошибка аутентификации');
-        }
-      } else {
-        // Приложение запущено не через Telegram, показываем страницу входа
-        setActiveTab(TabsEnum.AUTH);
-      }
-    } catch (error) {
-      console.error('Ошибка аутентификации:', error);
-      setActiveTab(TabsEnum.AUTH);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+
 
   // Показываем загрузку пока инициализируемся
   if (isLoading || activeTab === null) {
@@ -105,9 +67,39 @@ function App() {
   }
 
   return (
-    <UserProvider>
-      {activeTab === TabsEnum.AUTH && <AuthPage onChangeTab={onAuth} />}
+    <>
+      {import.meta.env.DEV && (
+        <div style={{ 
+          position: 'fixed', 
+          top: '10px', 
+          right: '10px', 
+          zIndex: 9999, 
+          background: activeTab === TabsEnum.MAIN ? 'green' : 'orange', 
+          color: 'white', 
+          padding: '5px', 
+          borderRadius: '5px',
+          fontSize: '12px'
+        }}>
+          {activeTab}
+        </div>
+      )}
+      {activeTab === TabsEnum.AUTH && <AuthPage onChangeTab={() => {
+        logger.log('🔄 AuthPage вызвал onChangeTab, переходим на главную...');
+        logger.log('🔄 Текущий activeTab:', activeTab);
+        logger.log('🔄 Устанавливаем activeTab в MAIN...');
+        setActiveTab(TabsEnum.MAIN);
+        logger.log('🔄 setActiveTab вызван с MAIN');
+      }} />}
       {activeTab === TabsEnum.MAIN && <MainPage />}
+      {import.meta.env.DEV && <DebugButton />}
+    </>
+  );
+}
+
+function App() {
+  return (
+    <UserProvider>
+      <AppContent />
     </UserProvider>
   );
 }
