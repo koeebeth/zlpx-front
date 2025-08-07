@@ -1,5 +1,5 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { UserProfile } from '../../types';
+import { createContext, useContext, useEffect, useState, ReactNode, useCallback } from 'react';
+import { UserProfile, DefaultService } from '../../types';
 import { telegramService } from '../telegram';
 
 // Fallback данные пользователя
@@ -27,6 +27,7 @@ interface UserContextType {
   updateUserProfile: (fields: Partial<UserProfile>) => Promise<boolean>;
   refetch: () => Promise<void>;
   isInitialized: boolean;
+  updateUserFromAuth: (userProfile: UserProfile) => void;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -79,6 +80,24 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     }
   };
 
+  // Слушаем изменения в localStorage для обновления профиля
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'user_profile' && e.newValue) {
+        try {
+          const profile = JSON.parse(e.newValue);
+          setUser(profile);
+          console.log('Профиль пользователя обновлен из localStorage:', profile);
+        } catch (e) {
+          console.warn('Ошибка парсинга обновленного профиля:', e);
+        }
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
+
   // Обновление профиля пользователя
   const updateUserProfile = async (fields: Partial<UserProfile>): Promise<boolean> => {
     try {
@@ -111,6 +130,17 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     }
   };
 
+  // Обновление пользователя после аутентификации
+  const updateUserFromAuth = useCallback((userProfile: UserProfile) => {
+    // Мерджим полученные данные с fallback данными для заполнения недостающих полей
+    const mergedUser = { ...FALLBACK_USER, ...userProfile };
+    setUser(mergedUser);
+    setError(null);
+    setIsInitialized(true);
+    setLoading(false);
+    console.log('Пользователь обновлен после аутентификации:', mergedUser);
+  }, []);
+
   // Загружаем профиль при инициализации
   useEffect(() => {
     fetchUserProfile();
@@ -124,6 +154,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     updateUserProfile,
     refetch: fetchUserProfile,
     isInitialized,
+    updateUserFromAuth,
   };
 
   return (
