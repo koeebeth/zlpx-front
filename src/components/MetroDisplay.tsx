@@ -1,4 +1,3 @@
-import React from 'react';
 import { useMetro } from '../lib/hooks/useMetro';
 import { getDisplayName } from '../lib/metro-utils';
 import type { MetroLine } from '../types/models/Metro';
@@ -36,19 +35,19 @@ export function MetroDisplay({ stationIds, emptyText = "Не указано" }: 
     return <span className="metro-display-empty">{emptyText}</span>;
   }
 
-  const stations = validStationIds.map(stationId => {
-    let foundStation: { station: MetroLine['stations'][0]; line: MetroLine } | null = null;
-    
+  type StationWithLine = { station: MetroLine['stations'][0]; line: MetroLine };
+
+  const stations: StationWithLine[] = [];
+  
+  validStationIds.forEach(stationId => {
     data.forEach(line => {
       line.stations.forEach(station => {
-        if (station.id === stationId && !foundStation) {
-          foundStation = { station, line };
+        if (station.id === stationId && !stations.some(s => s.station.id === stationId)) {
+          stations.push({ station, line });
         }
       });
     });
-    
-    return foundStation;
-  }).filter(Boolean);
+  });
 
   if (stations.length === 0) {
     return <span className="metro-display-empty">{emptyText}</span>;
@@ -56,16 +55,16 @@ export function MetroDisplay({ stationIds, emptyText = "Не указано" }: 
 
   return (
     <div className="metro-display">
-      {stations.map(({ station, line }, index) => (
-        <div key={station.id} className="metro-display-item">
+      {stations.map((stationData, index) => (
+        <div key={stationData.station.id} className="metro-display-item">
           <div 
             className="metro-display-line"
-            style={{ backgroundColor: line.color }}
+            style={{ backgroundColor: stationData.line.color }}
           >
-            {line.line_id}
+            {stationData.line.line_id}
           </div>
           <span className="metro-display-name">
-            {getDisplayName(station.name, 'ru')}
+            {getDisplayName(stationData.station.name, 'ru')}
           </span>
           {index < stations.length - 1 && <span className="metro-display-separator">, </span>}
         </div>

@@ -29,7 +29,7 @@ export function MetroSelector({ value, onChange, placeholder, label }: MetroSele
   const { isOpen, toggleDropdown, closeDropdown } = useDropdownManager(dropdownId);
 
   // Получаем данные метро с фиксированными настройками
-  const { data, loading, error } = useMetro({
+  const { data, error } = useMetro({
     language: 'ru',
     include_location: false,
     use_numeric_keys: true,
@@ -165,7 +165,7 @@ export function MetroSelector({ value, onChange, placeholder, label }: MetroSele
       s => !(s.stationId === stationId && s.lineId === lineId)
     );
     setSelectedStations(updatedSelection);
-    onChange(updatedSelection.map(s => s.stationName));
+    onChange(updatedSelection.map(s => s.stationId));
   };
 
   return (
@@ -173,7 +173,7 @@ export function MetroSelector({ value, onChange, placeholder, label }: MetroSele
       <div className="metro-selector-input" onClick={handleToggle}>
         <div className="metro-selector-content">
           {selectedStations.length > 0 ? (
-            selectedStations.map((station, index) => (
+            selectedStations.map((station) => (
               <div key={`${station.stationId}-${station.lineId}`} className="metro-selector-tag">
                 <div 
                   className="metro-selector-tag-line"

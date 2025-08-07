@@ -3,6 +3,7 @@
 /* tslint:disable */
  
 import type { ApiRequestOptions } from './ApiRequestOptions';
+import { BASE_PATH } from '../../store/api/api';
 
 type Resolver<T> = (options: ApiRequestOptions) => Promise<T>;
 type Headers = Record<string, string>;
@@ -20,7 +21,7 @@ export type OpenAPIConfig = {
 };
 
 export const OpenAPI: OpenAPIConfig = {
-    BASE: 'http://localhost:8001',
+    BASE: BASE_PATH,
     VERSION: '1.0.0',
     WITH_CREDENTIALS: false,
     CREDENTIALS: 'include',

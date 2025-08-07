@@ -14,7 +14,9 @@ export interface TelegramAuthResponse {
   user_profile: UserProfile;
 }
 
-const BASE_PATH = "https://api.ingroupsts.ru";
+const BASE_PATH = import.meta.env.VITE_API_BASE_URL || "https://api.ingroupsts.ru";
+
+export { BASE_PATH };
 
 // Создаем кастомный baseQuery с дополнительной отладкой
 const baseQueryWithDebug = fetchBaseQuery({ 
