@@ -33,11 +33,11 @@ export type UserProfile = {
     /**
      * Станция метро, на которой ты живешь
      */
-    live_metro_station: Array<string>;
+    live_metro_station: Array<number | string>;
     /**
      * Станция метро, на которой ты учишься/работаешь
      */
-    study_metro_station: Array<string>;
+    study_metro_station: Array<number | string>;
     /**
      * Год поступления в СтС
      */

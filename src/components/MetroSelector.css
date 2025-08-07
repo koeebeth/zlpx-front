@@ -1,0 +1,238 @@
+.metro-selector {
+  position: relative;
+  width: 100%;
+}
+
+.metro-selector-input {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 4px 8px;
+  background: #374151;
+  border: 1px solid #4b5563;
+  border-radius: 4px;
+  cursor: pointer;
+  min-height: 24px;
+  font-size: 14px;
+  color: #d1d5db;
+  transition: border-color 0.2s;
+  gap: 8px;
+}
+
+.metro-selector-input:hover {
+  border-color: #6b7280;
+}
+
+.metro-selector-content {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+  min-height: 16px;
+}
+
+.metro-selector-placeholder {
+  color: #9ca3af;
+  font-style: italic;
+}
+
+.metro-selector-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px;
+  background: #1e40af;
+  border-radius: 12px;
+  font-size: 12px;
+  color: white;
+  max-width: 200px;
+}
+
+.metro-selector-tag-line {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  font-size: 9px;
+  min-width: 16px;
+  flex-shrink: 0;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+.metro-selector-tag-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.metro-selector-tag-remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: 50%;
+  color: white;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  flex-shrink: 0;
+}
+
+.metro-selector-tag-remove:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.metro-selector-arrow {
+  margin-left: 8px;
+  font-size: 10px;
+  color: #9ca3af;
+}
+
+.metro-selector-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #1f2937;
+  border: 1px solid #4b5563;
+  border-radius: 4px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  max-height: 300px;
+  overflow-y: auto;
+  margin-top: 2px;
+}
+
+.metro-selector-search {
+  padding: 8px;
+  border-bottom: 1px solid #4b5563;
+}
+
+.metro-selector-search-input {
+  width: 100%;
+  padding: 6px 8px;
+  background: #374151;
+  border: 1px solid #4b5563;
+  border-radius: 4px;
+  color: #f3f4f6;
+  font-size: 14px;
+}
+
+.metro-selector-search-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
+
+.metro-selector-error {
+  padding: 8px;
+  color: #ef4444;
+  font-size: 12px;
+  background: #991b1b;
+  border-radius: 4px;
+  margin: 8px;
+}
+
+.metro-selector-results {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.metro-selector-no-results {
+  padding: 12px;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 14px;
+}
+
+.metro-selector-stations {
+  display: flex;
+  flex-direction: column;
+}
+
+.metro-selector-station {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  border-bottom: 1px solid #374151;
+}
+
+.metro-selector-station:hover {
+  background: #374151;
+}
+
+.metro-selector-station.selected {
+  background: #1e40af;
+}
+
+.metro-selector-station-name {
+  flex: 1;
+  color: #f3f4f6;
+  font-size: 14px;
+}
+
+.metro-selector-line-indicator {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  font-size: 10px;
+  min-width: 18px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+
+
+/* Темная тема */
+.dark .metro-selector-input {
+  background: #374151;
+  border-color: #4b5563;
+  color: #d1d5db;
+}
+
+.dark .metro-selector-placeholder {
+  color: #6b7280;
+}
+
+.dark .metro-selector-tag {
+  background: #1e40af;
+}
+
+.dark .metro-selector-dropdown {
+  background: #1f2937;
+  border-color: #4b5563;
+}
+
+.dark .metro-selector-search-input {
+  background: #374151;
+  border-color: #4b5563;
+  color: #f3f4f6;
+}
+
+.dark .metro-selector-station {
+  border-bottom-color: #374151;
+}
+
+.dark .metro-selector-station:hover {
+  background: #374151;
+}
+
+.dark .metro-selector-station.selected {
+  background: #1e40af;
+}
+
+ 

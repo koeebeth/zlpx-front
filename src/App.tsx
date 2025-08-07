@@ -1,5 +1,3 @@
-import "./App.css";
-
 import { useEffect, useState } from "react";
 
 import { Loader } from "./components/Loader";

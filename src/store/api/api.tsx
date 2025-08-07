@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { CalendarEventT } from "../calendar/state";
 import { EventApiT } from "./models/models";
 
-const BASE_PATH = "http://localhost:8001";
+export const BASE_PATH = "http://localhost:8001";
 
 export const calendarApi = createApi({
   reducerPath: "calendarApi",

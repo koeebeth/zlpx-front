@@ -27,6 +27,7 @@ export const Profile: FC = () => {
       <div className="w-full p-4 text-center text-xl font-medium text-light-purple">
         Профиль
       </div>
+      
       <ProfileDetails 
         user={user} 
         setUser={setUser} 

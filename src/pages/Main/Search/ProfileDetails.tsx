@@ -16,6 +16,7 @@ import {
 import { type UserProfile } from "../../../types";
 import { ContactForm } from "./ContactForm";
 import { PersonalInfoForm } from "./PersonalInfoForm";
+import { MetroDisplay } from "../../../components/MetroDisplay";
 
 type PropsT = {
   user: UserProfile;
@@ -113,15 +114,16 @@ export const ProfileDetails: FC<PropsT> = ({ user, setUser, updateUserProfile, i
               currentSetUser(data);
               setIsEditingPersonalInfo(false);
             }}
+            updateUserProfile={currentUpdateUserProfile}
           />
         ) : (
           <div className="flex flex-col gap-3 animate-fadein">
-            <p className="dark: text-zinc-300 text-sm">
-              Живет возле станции: <b>{currentUser?.live_metro_station.join(",")}</b>
-            </p>
-            <p className="dark: text-zinc-300 text-sm">
-              Учится возле станции: <b>{currentUser?.study_metro_station.join(",")}</b>
-            </p>
+            <div className="dark: text-zinc-300 text-sm">
+              Живет возле станции: <b><MetroDisplay stationIds={currentUser?.live_metro_station || []} /></b>
+            </div>
+            <div className="dark: text-zinc-300 text-sm">
+              Учится возле станции: <b><MetroDisplay stationIds={currentUser?.study_metro_station || []} /></b>
+            </div>
             <p className="dark: text-zinc-300 text-sm">
               Дата рождения:{" "}
               <b>
